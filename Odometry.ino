@@ -38,29 +38,60 @@ int getLeftWheelSpeed(int rightWheelSpeed)
 }
 
 void loop()
-{
+{ 
+  if (Serial.available() > 0) 
+  {
+    // read the incoming byte:
+    char function = Serial.read();
+    Serial.available();Serial.available();Serial.available();
+    Serial.print(Serial.read());Serial.print(Serial.read());Serial.print(Serial.read());
+    int16_t param = (100 * (Serial.read() - '0')) + (10 * (Serial.read() - '0')) + (Serial.read() - '0');
+    
+    Serial.print(char(function));
+    Serial.println(param);
+
+    switch(function)
+    {
+      case 'w':
+        robot.moveFor(Wheel::convertMillimetersToSteps(param), Wheel::FORWARD);
+        break;
+      case 'd':
+        robot.turnRight(param);
+        break;
+      case 'a':
+        robot.turnLeft(param);
+        break;
+    }
+  }
+  
 //  Serial.println(analogRead(A3));
 //    Serial.println(analogRead(A1));
 //    delay(10);
 
-  delay(5000);
-  robot.spinInRight(90);
-  robot.stop();
-    
-  delay(5000);
-//  robot.moveFor(250, Wheel::FORWARD);
-
-  Serial.println("robot.startSmoothly(255);");
-  robot.startSmoothly(255);
-
-  Serial.println("robot.moveFor(Wheel::convertMillimetersToSteps(326), Wheel::FORWARD);");
-  robot.moveFor(Wheel::convertMillimetersToSteps(326), Wheel::FORWARD);
-
-  Serial.println("robot.followCircleInRight(380, Wheel::convertMillimetersToSteps(233));");
-  robot.followCircleInRight(380, Wheel::convertMillimetersToSteps(233));
-
-  Serial.println("robot.followCircleInRight(300, Wheel::convertMillimetersToSteps(233));");
-  robot.followCircleInLeft(300, Wheel::convertMillimetersToSteps(233));
+//delay(5000);
+////robot.moveFor(Wheel::convertMillimetersToSteps(326), Wheel::FORWARD);
+//robot.turnRight(45);
+//robot.stop();
+//delay(5000);
+//
+//  delay(5000);
+//  robot.spinInRight(75);
+//  robot.stop();
+//    
+//  delay(5000);
+////  robot.moveFor(250, Wheel::FORWARD);
+//
+//  Serial.println("robot.startSmoothly(255);");
+//  robot.startSmoothly(255);
+//
+//  Serial.println("robot.moveFor(Wheel::convertMillimetersToSteps(326), Wheel::FORWARD);");
+//  robot.moveFor(Wheel::convertMillimetersToSteps(326), Wheel::FORWARD);
+//
+//  Serial.println("robot.followCircleInRight(380, Wheel::convertMillimetersToSteps(233));");
+//  robot.followCircleInRight(380, Wheel::convertMillimetersToSteps(233));
+//
+//  Serial.println("robot.followCircleInRight(300, Wheel::convertMillimetersToSteps(233));");
+//  robot.followCircleInLeft(300, Wheel::convertMillimetersToSteps(233));
 
 //  Serial.println("robot.followCircleInRight(360, Wheel::convertMillimetersToSteps(233));");
 //  robot.followCircleInRight(360, Wheel::convertMillimetersToSteps(197));
@@ -80,8 +111,8 @@ void loop()
 //  Serial.println("robot.moveFor(Wheel::convertMillimetersToSteps(650), Wheel::FORWARD);");
 //  robot.moveFor(Wheel::convertMillimetersToSteps(650), Wheel::FORWARD);
   
-  robot.stop();
-  delay(5000);
+//  robot.stop();
+//  delay(5000);
 //  
 //  leftWheel.move(Wheel::FORWARD, 90);
 //  rightWheel.move(Wheel::FORWARD, 114);  

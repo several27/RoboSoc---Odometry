@@ -86,41 +86,66 @@ void Robot::moveBackward()
 
 void Robot::moveFor(uint16_t steps, Wheel::MoveDirection direction)
 {   
-	this->move(direction);
+  uint16_t madeSteps = 0;
+  uint8_t speed = 0;
 
-	uint16_t stepsMadeByWheels = this->rightWheel->getDistance() + this->leftWheel->getDistance();
-	uint16_t averageStepsToStartSmoothly = stepsMadeByWheels / 2;
+  // Start
+  while (speed < this->normalSpeed)
+  {
+    leftWheel->move(speed);
+    rightWheel->move(speed);
 
-  if ( (steps * 2) < averageStepsToStartSmoothly )
-    return;
+    if (madeSteps >= steps)
+    {
+      break;
+    }
+    
+    unsigned long j = millis() + 5;
 
-//  Serial.println("tak");
-//  Serial.println(stepsMadeByWheels);
-//  Serial.println(steps * 2);
-//  Serial.println(averageStepsToStartSmoothly);
+    while (j > millis())
+    {
+      leftWheel->updateDistance();
+      rightWheel->updateDistance(); 
 
-	while (stepsMadeByWheels < ((steps * 2) - averageStepsToStartSmoothly))
-	{
-//    Serial.print(stepsMadeByWheels);
-//    Serial.print(", ");
-		stepsMadeByWheels += this->leftWheel->getDistance();
-		this->leftWheel->updateDistance();
+      madeSteps += leftWheel->getDistance() + rightWheel->getDistance();
+    }
 
-		stepsMadeByWheels += this->rightWheel->getDistance();
-		this->rightWheel->updateDistance();
-	}
-// Serial.println();
+    speed++;
+  }
+  
+  uint16_t stepsToAccelerate = madeSteps;
 
-//	this->stopSmoothly(this->normalSpeed);
+  // Middle
+  if (madeSteps < steps)
+  {
+    while (madeSteps < (steps * 2) - stepsToAccelerate)
+    {
+      leftWheel->updateDistance();
+      rightWheel->updateDistance(); 
+  
+      madeSteps += leftWheel->getDistance() + rightWheel->getDistance();
+    }
+  }
+  
+  // End
+  for (uint8_t i = speed; i > 0; i--)
+  {
+    this->leftWheel->move(Wheel::FORWARD, i);
+    this->rightWheel->move(Wheel::FORWARD, i);
+
+    delay(5);
+  }
 }
 
 void Robot::spin(uint16_t angle, Wheel *firstWheel, Wheel *secondWheel)
 {
-  uint16_t steps = (PI * this->width * angle / 360) * 2;
+  uint16_t steps = (PI * this->width * angle / 360) * 4;
   uint8_t speed = 0;
 
   firstWheel->move(Wheel::FORWARD, 0);
   secondWheel->move(Wheel::BACKWARD, 0);
+
+  Serial.println(steps);
 
   while (steps > 0)
   {
@@ -130,14 +155,20 @@ void Robot::spin(uint16_t angle, Wheel *firstWheel, Wheel *secondWheel)
     if (speed < 255)
       speed++;
 
-    unsigned long j = millis() + 5;
+    unsigned long j = millis() + 10;
     while (j > millis())
     {
-      steps -= firstWheel->getDistance();
-      firstWheel->updateDistance();
-      
-      steps -= secondWheel->getDistance();
-      secondWheel->updateDistance();
+      if (steps > 0)
+      {
+        steps -= firstWheel->getDistance();
+        firstWheel->updateDistance();
+      }
+
+      if (steps > 0)
+      {
+        steps -= secondWheel->getDistance();
+        secondWheel->updateDistance(); 
+      }
     }
   }
 }
@@ -158,47 +189,79 @@ void Robot::spinInLeft(uint16_t angle)
 // by subtracting width of an robot from bigger radius
 void Robot::followCircle(uint16_t angle, uint32_t radius, Wheel *firstWheel, Wheel *secondWheel)
 {
-	uint16_t stepsOfFirstCircle = 2 * PI * radius * angle / 360;
-	uint16_t stepsOfSecondCircle = 2 * PI * (radius - this->width) * angle / 360;
+	uint16_t stepsOfFirstCircle = (2 * PI * radius * angle / 360);
+	uint16_t stepsOfSecondCircle = (2 * PI * (radius - this->width) * angle / 360);
+  uint16_t steps = stepsOfFirstCircle + stepsOfSecondCircle;
 
 	uint8_t secondWheelSpeed = stepsOfSecondCircle * this->normalSpeed / stepsOfFirstCircle;
+
+  uint8_t madeSteps = 0, currentFirstWheelSpeed = 0, currentSecondWheelSpeed = 0;
 //
-//  Serial.println("---");
 //  Serial.println(stepsOfFirstCircle);
 //  Serial.println(stepsOfSecondCircle);
-//  Serial.println(secondWheelSpeed);
+//  Serial.println(steps);
+//  
 
-	firstWheel->move(Wheel::FORWARD, this->normalSpeed);
-	secondWheel->move(Wheel::FORWARD, secondWheelSpeed);
+//	firstWheel->move(Wheel::FORWARD, this->normalSpeed);
+//	secondWheel->move(Wheel::FORWARD, secondWheelSpeed);
 
-	while (stepsOfFirstCircle + stepsOfSecondCircle > 0)
-	{
-//    Serial.print(stepsOfFirstCircle);
-//    Serial.print(", ");
-//    Serial.print(stepsOfSecondCircle);
-//    Serial.print("; ");
+  // Start
+  while (currentFirstWheelSpeed < this->normalSpeed || currentSecondWheelSpeed < secondWheelSpeed)
+  {
+    firstWheel->move(currentFirstWheelSpeed);
+    secondWheel->move(currentSecondWheelSpeed);
+
+    if (madeSteps >= steps)
+    {
+      break;
+    }
+    
+    unsigned long j = millis() + 5;
+
+    while (j > millis())
+    {
+      leftWheel->updateDistance();
+      rightWheel->updateDistance(); 
+
+      madeSteps += leftWheel->getDistance() + rightWheel->getDistance();
+    }
+
+    if (currentFirstWheelSpeed < this->normalSpeed)
+      currentFirstWheelSpeed++;
+
+    if (currentSecondWheelSpeed < secondWheelSpeed)
+      currentSecondWheelSpeed++;
+  }
   
-		if (stepsOfFirstCircle <= 0)
-		{
-//			firstWheel->stop();
-		}
-    else
-    {
-      stepsOfFirstCircle -= firstWheel->getDistance();
-      firstWheel->updateDistance();
-    }
+  uint16_t stepsToAccelerate = madeSteps;
 
-		if (stepsOfSecondCircle <= 0)
-		{
-//			secondWheel->stop();
-		}
-    else
+  // Middle
+  if (madeSteps < steps)
+  {
+    while (madeSteps < (steps * 2) - stepsToAccelerate)
     {
-      stepsOfSecondCircle -= secondWheel->getDistance();
-      secondWheel->updateDistance();
+      leftWheel->updateDistance();
+      rightWheel->updateDistance(); 
+  
+      madeSteps += leftWheel->getDistance() + rightWheel->getDistance();
     }
-	}
-// Serial.println();
+  }
+  
+  // End
+  while (currentFirstWheelSpeed > 0 || currentSecondWheelSpeed > 0)
+  {
+    firstWheel->move(Wheel::FORWARD, currentFirstWheelSpeed);
+    secondWheel->move(Wheel::FORWARD, currentSecondWheelSpeed);
+//Serial.println(currentFirstWheelSpeed);
+    delay(5);
+
+    if (currentFirstWheelSpeed > 0)
+      currentFirstWheelSpeed--;
+
+    if (currentSecondWheelSpeed > 0)
+      currentSecondWheelSpeed--;
+  }
+
 }
 
 // follows a circle in the right direction, bigger distance will be driven
@@ -219,7 +282,53 @@ void Robot::followCircleInLeft(uint16_t angle, uint32_t radius)
 // as long as angle is reached
 void Robot::turn(uint16_t angle, Wheel *firstWheel, Wheel *secondWheel)
 {
-	Robot::followCircle(angle, this->width + 1, firstWheel, secondWheel);
+	uint16_t madeSteps = 0;
+  uint8_t speed = 0;
+
+  uint16_t steps = (2 * PI * this->width * angle / 360);
+
+  // Start
+  while (speed < this->normalSpeed)
+  {
+    firstWheel->move(speed);
+
+    if (madeSteps >= steps / 2)
+    {
+      break;
+    }
+    
+    unsigned long j = millis() + 5;
+
+    while (j > millis())
+    {
+      leftWheel->updateDistance();
+
+      madeSteps += leftWheel->getDistance();
+    }
+
+    speed++;
+  }
+  
+  uint16_t stepsToAccelerate = madeSteps;
+
+  // Middle
+  if (madeSteps < steps / 2)
+  {
+    while (madeSteps < (steps * 2) - stepsToAccelerate)
+    {
+      firstWheel->updateDistance();
+  
+      madeSteps += firstWheel->getDistance();
+    }
+  }
+  
+  // End
+  for (uint8_t i = speed; i > 0; i--)
+  {
+    firstWheel->move(Wheel::FORWARD, i);
+
+    delay(5);
+  }
 }
 
 void Robot::turnRight(uint16_t angle)
