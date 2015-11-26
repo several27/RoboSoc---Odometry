@@ -22,16 +22,136 @@ void setup()
 {
   Serial.begin(9600);
   
-  rightWheel.setup(ENB, IN3, IN4, IRB);
-  leftWheel.setup(ENA, IN1, IN2, IRA);
+  rightWheel.setup(ENB, IN3, IN4, IRB, 1);
+  leftWheel.setup(ENA, IN1, IN2, IRA, 0.7826086957); // 0.75    0.7826086957
   robot.setup(&leftWheel, &rightWheel);
 }
 
 
 int val = 0;
 
+int getLeftWheelSpeed(int rightWheelSpeed)
+{
+  // 90 / 115 - 0.7826086957
+  // 90 / 114 - 0.7894736842
+  return 0.75 * rightWheelSpeed;
+}
+
 void loop()
 {
+//  Serial.println(analogRead(A3));
+//    Serial.println(analogRead(A1));
+//    delay(10);
+
+  delay(5000);
+  robot.spinInRight(90);
+  robot.stop();
+    
+  delay(5000);
+//  robot.moveFor(250, Wheel::FORWARD);
+
+  Serial.println("robot.startSmoothly(255);");
+  robot.startSmoothly(255);
+
+  Serial.println("robot.moveFor(Wheel::convertMillimetersToSteps(326), Wheel::FORWARD);");
+  robot.moveFor(Wheel::convertMillimetersToSteps(326), Wheel::FORWARD);
+
+  Serial.println("robot.followCircleInRight(380, Wheel::convertMillimetersToSteps(233));");
+  robot.followCircleInRight(380, Wheel::convertMillimetersToSteps(233));
+
+  Serial.println("robot.followCircleInRight(300, Wheel::convertMillimetersToSteps(233));");
+  robot.followCircleInLeft(300, Wheel::convertMillimetersToSteps(233));
+
+//  Serial.println("robot.followCircleInRight(360, Wheel::convertMillimetersToSteps(233));");
+//  robot.followCircleInRight(360, Wheel::convertMillimetersToSteps(197));
+//
+//  Serial.println("robot.moveFor(Wheel::convertMillimetersToSteps(326), Wheel::FORWARD);");
+//  robot.moveFor(Wheel::convertMillimetersToSteps(150), Wheel::FORWARD); // 150
+//
+//  Serial.println("robot.turnRight(45);");
+//  robot.turnRight(45);
+//
+//  Serial.println("robot.moveFor(Wheel::convertMillimetersToSteps(257), Wheel::FORWARD);");
+//  robot.moveFor(Wheel::convertMillimetersToSteps(257), Wheel::FORWARD);
+//
+//  Serial.println("robot.turnRight(53);");
+//  robot.turnRight(53);
+//
+//  Serial.println("robot.moveFor(Wheel::convertMillimetersToSteps(650), Wheel::FORWARD);");
+//  robot.moveFor(Wheel::convertMillimetersToSteps(650), Wheel::FORWARD);
+  
+  robot.stop();
+  delay(5000);
+//  
+//  leftWheel.move(Wheel::FORWARD, 90);
+//  rightWheel.move(Wheel::FORWARD, 114);  
+//  delay(5000);
+//  delay(5000);
+//  delay(5000);
+
+//  int speed = 200;
+//
+//  delay(5000);
+//
+//  for (int i = 0; i < speed; i++)
+//  {
+//    leftWheel.move(Wheel::FORWARD, getLeftWheelSpeed(i));
+//    rightWheel.move(Wheel::FORWARD, i);  
+//    delay(10);
+//  }
+//  
+//  delay(1000);
+//  leftWheel.move(Wheel::FORWARD, getLeftWheelSpeed(speed));
+//  rightWheel.move(Wheel::FORWARD, speed);
+////  delay(1000);
+//
+//  for (int i = speed; i > 0; i--)
+//  { 
+//    leftWheel.move(Wheel::FORWARD, getLeftWheelSpeed(i));
+//    rightWheel.move(Wheel::FORWARD, i);  
+//    delay(10);
+    
+//
+//    unsigned long j = millis() + 100;
+//
+//    while (j > millis())
+//    {
+//      leftWheel->updateDistance();
+//      rightWheel->updateDistance(); 
+//    }
+//  }
+  
+  
+//  leftWheel.move(Wheel::FORWARD, 50);
+//  delay(30);
+//  leftWheel.move(Wheel::FORWARD, 85);
+//  delay(5000);
+
+   
+//  for (int i = 0; i < this->normalSpeed; i++)
+//  { 
+//    leftWheel->move(Wheel::FORWARD, i);
+//    rightWheel->move(Wheel::FORWARD, (i + 50) < 255 ? i + 50 : 255);  
+//
+//    unsigned long j = millis() + 100;
+//
+//    while (j > millis())
+//    {
+//      leftWheel->updateDistance();
+//      rightWheel->updateDistance(); 
+//    }
+//  }
+  
+
+
+
+
+
+
+
+
+
+  
 //  char buffer[50];
 //  sprintf(buffer, "Left: %d Right: %d", analogRead(IRA), analogRead(IRB));
 //  Serial.println(analogRead(IRA));
@@ -101,14 +221,14 @@ void loop()
 //leftWheel.move(255);
 //
 //  Serial.print("Left: ");
-//  Serial.print(analogRead(A3));
+//  Serial.println(analogRead(A3));
 //  Serial.print(" Right: ");
-//  Serial.print(analogRead(A1));
+//  Serial.println(analogRead(A1));
 //  Serial.println();
 
-  robot.moveFor(100, Wheel::FORWARD);
+//  robot.moveFor(100, Wheel::FORWARD);
 //  robot.stop();
-  delay(5000);
+//  delay(5000);
 
 //  robot.turnRight(60);
 //  robot.stop();

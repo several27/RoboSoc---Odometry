@@ -5,31 +5,41 @@
 #include "Arduino.h"
 #include "Wheel.h"
 
-Wheel::Wheel() { }
+Wheel::Wheel()
+{ }
 
-Wheel::~Wheel() { }
+Wheel::~Wheel()
+{ }
 
-void Wheel::setup(uint8_t speedControlPort, uint8_t directionControlPort1, uint8_t directionControlPort2, uint8_t speedSensorPort)
+void Wheel::setup(uint8_t speedControlPort, uint8_t directionControlPort1, uint8_t directionControlPort2,
+                  uint8_t speedSensorPort, float speedRatio)
 {
 	this->speedControlPort = speedControlPort;
 	this->directionControlPort1 = directionControlPort1;
 	this->directionControlPort2 = directionControlPort2;
 	this->speedSensorPort = speedSensorPort;
-	
+
+	this->speedRatio = speedRatio;
+
 	pinMode(speedControlPort, OUTPUT);
 	pinMode(directionControlPort1, OUTPUT);
 	pinMode(directionControlPort2, OUTPUT);
-//	pinMode(speedSensorPort, OUTPUT);
-	
+
 	this->distancePassed = 0;
 	this->hole = this->isOnHole();
+
+	this->setDirection(Wheel::FORWARD);
 }
 
+uint8_t Wheel::calculateSpeed(uint8_t speed)
+{
+	return this->speedRatio * speed;
+}
 
 void Wheel::setDirection(MoveDirection direction)
 {
 	switch (direction)
-	{ // TODO: are directions correct ?
+	{
 		case FORWARD:
 			digitalWrite(this->directionControlPort1, HIGH);
 			digitalWrite(this->directionControlPort2, LOW);
@@ -48,13 +58,14 @@ enum Wheel::MoveDirection Wheel::getDirection()
 
 void Wheel::move(MoveDirection direction, uint8_t speed)
 {
-	setDirection(direction);
+	this->setDirection(direction);
 	this->move(speed);
 }
 
 void Wheel::move(uint8_t speed)
 {
-	analogWrite(speedControlPort, speed);
+	this->currentSpeed = this->calculateSpeed(speed);
+	analogWrite(this->speedControlPort, this->currentSpeed);
 }
 
 void Wheel::stop()
@@ -62,10 +73,19 @@ void Wheel::stop()
 	this->move(0);
 }
 
+uint8_t Wheel::getCurrentSpeed()
+{
+	return this->currentSpeed;
+}
+
+float Wheel::getSpeedRatio()
+{
+	return this->speedRatio;
+}
+
 bool Wheel::isOnHole()
 {
-//    Serial.println(analogRead(this->speedSensorPort));
-    return analogRead(this->speedSensorPort) >= this->speedControlOnHoleAboveValue; // TODO: ???
+	return analogRead(this->speedSensorPort) >= this->speedControlOnHoleAboveValue;
 }
 
 void Wheel::updateDistance()
@@ -73,7 +93,7 @@ void Wheel::updateDistance()
 	if (hole != this->isOnHole())
 	{
 		this->distancePassed++;
-    hole = this->isOnHole();
+		hole = this->isOnHole();
 	}
 }
 
@@ -84,8 +104,8 @@ uint16_t Wheel::getDistance()
 	return distancePassed;
 }
 
-uint32_t Wheel::convertMilimitersToSteps(uint32_t milimiters)
+uint32_t Wheel::convertMillimetersToSteps(uint32_t millimeters)
 {
-  return milimiters * numberOfStepsInWheel / 2 / PI / wheelRadiusInMilimiters;
+	return millimeters * numberOfStepsInWheel / 2 / PI / wheelRadiusInMillimeters;
 }
 

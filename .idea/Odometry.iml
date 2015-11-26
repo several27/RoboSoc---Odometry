@@ -4,9 +4,6 @@
     <content url="file:///Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/CDC.cpp">
       <sourceFolder url="file:///Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/CDC.cpp" isTestSource="false" />
     </content>
-    <content url="file:///Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/HID.cpp">
-      <sourceFolder url="file:///Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/HID.cpp" isTestSource="false" />
-    </content>
     <content url="file:///Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/HardwareSerial.cpp">
       <sourceFolder url="file:///Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/HardwareSerial.cpp" isTestSource="false" />
     </content>
@@ -24,6 +21,9 @@
     </content>
     <content url="file:///Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/IPAddress.cpp">
       <sourceFolder url="file:///Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/IPAddress.cpp" isTestSource="false" />
+    </content>
+    <content url="file:///Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/PluggableUSB.cpp">
+      <sourceFolder url="file:///Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/PluggableUSB.cpp" isTestSource="false" />
     </content>
     <content url="file:///Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/Print.cpp">
       <sourceFolder url="file:///Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/Print.cpp" isTestSource="false" />
@@ -77,6 +77,8 @@
       <sourceFolder url="file://$MODULE_DIR$/cmake/ArduinoToolchain.cmake" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/cmake/Platform/Arduino.cmake" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Robot.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Robot.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Wheel.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Wheel.h" isTestSource="false" />
     </content>
@@ -122,7 +124,6 @@
           <root url="file:///Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/HardwareSerial2.cpp" />
           <root url="file:///Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/HardwareSerial1.cpp" />
           <root url="file:///Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/HardwareSerial0.cpp" />
-          <root url="file:///Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/HID.cpp" />
           <root url="file:///Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/new.cpp" />
           <root url="file:///Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/main.cpp" />
           <root url="file:///Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/wiring_analog.c" />
@@ -134,6 +135,7 @@
           <root url="file:///Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/wiring.c" />
           <root url="file:///Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/Tone.cpp" />
           <root url="file:///Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/WInterrupts.c" />
+          <root url="file:///Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/PluggableUSB.cpp" />
           <root url="file:///Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/wiring_digital.c" />
           <root url="file:///Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/abi.cpp" />
           <root url="file:///Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/Stream.cpp" />

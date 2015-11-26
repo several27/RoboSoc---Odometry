@@ -10,38 +10,50 @@
 class Wheel
 {
 public:
-    Wheel();
-    ~Wheel();
-	
-	void setup(uint8_t, uint8_t, uint8_t, uint8_t);
-	
-	enum MoveDirection {FORWARD, BACKWARD};
+	Wheel();
+
+	~Wheel();
+
+	void setup(uint8_t, uint8_t, uint8_t, uint8_t, float);
+
+	enum MoveDirection
+	{
+		FORWARD, BACKWARD
+	};
+
 	void setDirection(MoveDirection);
 	enum MoveDirection getDirection();
-	
 	void move(MoveDirection, uint8_t);
 	void move(uint8_t);
+
 	void stop();
 
-  bool isOnHole(void);
-  void updateDistance(void);
-  uint16_t getDistance();
+	uint8_t getCurrentSpeed();
+	float getSpeedRatio();
 
-  static uint32_t convertMilimitersToSteps(uint32_t);
+	bool isOnHole();
+	void updateDistance();
+	uint16_t getDistance();
+
+	static uint32_t convertMillimetersToSteps(uint32_t);
 
 private:
-    // TODO: What is this value ??
-    const uint16_t speedControlOnHoleAboveValue = 100;
-    const static uint8_t wheelRadiusInMilimiters = 45;
-    const static uint8_t numberOfStepsInWheel = 48;
-    
-    uint8_t speedControlPort;
-    uint8_t directionControlPort1;
-    uint8_t directionControlPort2;
-    uint8_t speedSensorPort;
-    
-    bool hole;
-    uint16_t distancePassed;
+	const uint16_t speedControlOnHoleAboveValue = 90;
+	const static uint8_t wheelRadiusInMillimeters = 45;
+	const static uint8_t numberOfStepsInWheel = 48;
+
+	uint8_t speedControlPort;
+	uint8_t directionControlPort1;
+	uint8_t directionControlPort2;
+	uint8_t speedSensorPort;
+
+	float speedRatio;
+
+	bool hole;
+	uint16_t distancePassed;
+	uint8_t currentSpeed = 0;
+
+	uint8_t calculateSpeed(uint8_t);
 };
 
 
