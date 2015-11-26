@@ -89,6 +89,8 @@ void Robot::moveFor(uint16_t steps, Wheel::MoveDirection direction)
   uint16_t madeSteps = 0;
   uint8_t speed = 0;
 
+  Serial.println(steps);
+
   // Start
   while (speed < this->normalSpeed)
   {
@@ -301,10 +303,10 @@ void Robot::turn(uint16_t angle, Wheel *firstWheel, Wheel *secondWheel)
 
     while (j > millis())
     {
-      leftWheel->updateDistance();
+      firstWheel->updateDistance();
 
-      madeSteps += leftWheel->getDistance();
-    }
+      madeSteps += firstWheel->getDistance();
+    } 
 
     speed++;
   }
@@ -340,3 +342,16 @@ void Robot::turnLeft(uint16_t angle)
 {
 	this->turn(angle, this->rightWheel, this->leftWheel);
 }
+
+void Robot::twerking()
+{
+  for (int i = 0; i < 50; i++)
+  {
+    this->move(Wheel::FORWARD);
+    delay(50);
+    
+    this->move(Wheel::BACKWARD);
+    delay(50);
+  }
+}
+

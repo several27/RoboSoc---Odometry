@@ -40,6 +40,8 @@ public:
 	void turnLeft(uint16_t);
 	void turnRight(uint16_t);
 
+ void twerking();
+
 private:
 	uint8_t normalSpeed = 255;
 	const uint16_t width = 29; // 155 mm = 29 steps

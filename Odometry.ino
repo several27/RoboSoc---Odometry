@@ -18,17 +18,80 @@ Wheel leftWheel;
 Wheel rightWheel;
 Robot robot;
 
+
+ //       note, period, &  frequency.
+ #define  C     2100
+ #define  D     1870 
+ #define  E     1670
+ #define  f     1580    // Does not seem to like capital F
+ #define  G     1400 
+ // Define a special note, 'R', to represent a rest
+ #define  R     0
+
+ int speakerOut = 3;
+
+ // MELODY and TIMING  =======================================
+ //  melody[] is an array of notes, accompanied by beats[],
+ //  which sets each note's relative length (higher #, longer note)
+ int melody[] = {E, E, E,R,
+ E, E, E,R,
+ E, G, C, D, E, R,
+ f, f, f,f, f, E, E,E, E, D ,D,E, D, R, G ,R,
+ E, E, E,R,
+ E, E, E,R,
+ E, G, C, D, E, R,
+ f, f, f,f, f, E, E, E,  G,G, f, D, C,R };
+ int MAX_COUNT = sizeof(melody) / 2; // Melody length, for looping.
+ // Set overall tempo
+ long tempo = 10000;
+ // Set length of pause between notes
+ int pause = 1000;
+ // Loop variable to increase Rest length
+ int rest_count = 100; //<-BLETCHEROUS HACK; See NOTES
+ // Initialize core variables
+ int tone_ = 0;
+ int beat = 0;
+ long duration  = 0;
+ // PLAY TONE  ==============================================
+ // Pulse the speaker to play a tone for a particular duration
+ void playTone() {
+   long elapsed_time = 0;
+   if (tone_ > 0) { // if this isn't a Rest beat, while the tone has
+     //  played less long than 'duration', pulse speaker HIGH and LOW
+     while (elapsed_time < duration) {
+       digitalWrite(speakerOut,HIGH);
+       delayMicroseconds(tone_ / 2);
+       // DOWN
+       digitalWrite(speakerOut, LOW);
+       delayMicroseconds(tone_ / 2);
+       // Keep track of how long we pulsed
+       elapsed_time += (tone_);
+     }
+   }
+   else { // Rest beat; loop times delay
+     for (int j = 0; j < rest_count; j++) { // See NOTE on rest_count
+       delayMicroseconds(duration); 
+     } 
+   }                                
+ }
+
+
+
+
 void setup()
 {
   Serial.begin(9600);
   
+  pinMode(speakerOut, OUTPUT);
+  
   rightWheel.setup(ENB, IN3, IN4, IRB, 1);
-  leftWheel.setup(ENA, IN1, IN2, IRA, 0.7826086957); // 0.75    0.7826086957
+  leftWheel.setup(ENA, IN1, IN2, IRA, 0.75); // 0.75    0.7826086957
   robot.setup(&leftWheel, &rightWheel);
 }
 
 
 int val = 0;
+char command[4];
 
 int getLeftWheelSpeed(int rightWheelSpeed)
 {
@@ -39,37 +102,140 @@ int getLeftWheelSpeed(int rightWheelSpeed)
 
 void loop()
 { 
-  if (Serial.available() > 0) 
-  {
-    // read the incoming byte:
-    char function = Serial.read();
-    Serial.available();Serial.available();Serial.available();
-    Serial.print(Serial.read());Serial.print(Serial.read());Serial.print(Serial.read());
-    int16_t param = (100 * (Serial.read() - '0')) + (10 * (Serial.read() - '0')) + (Serial.read() - '0');
-    
-    Serial.print(char(function));
-    Serial.println(param);
+//robot.moveFor(Wheel::convertMillimetersToSteps(326), Wheel::FORWARD);
 
-    switch(function)
-    {
-      case 'w':
-        robot.moveFor(Wheel::convertMillimetersToSteps(param), Wheel::FORWARD);
-        break;
-      case 'd':
-        robot.turnRight(param);
-        break;
-      case 'a':
-        robot.turnLeft(param);
-        break;
-    }
+//  int index = 0;
+//  while (Serial.available()) 
+//  {
+//    delay(10); 
+//    if (Serial.available() > 0) 
+//    {
+//      command[index] = Serial.read();
+//      index++;
+//    }
+//  }
+//
+//  if (strlen(command) != 0)
+//  {
+//    Serial.println(command);
+//    
+//    char function = command[0];
+//    uint16_t param = (100 * (command[1] - '0')) + (10 * (command[2] - '0')) + (1 * (command[3] - '0'));
+//
+//    Serial.println(function);
+//    Serial.println(param);
+//  
+//    switch(function)
+//    {
+//      case 'w':
+//        robot.moveFor(Wheel::convertMillimetersToSteps(param), Wheel::FORWARD);
+//        robot.stop();
+//        break;
+//      case 'd':
+//        robot.turnRight(param);
+//        robot.stop();
+//        break;
+//      case 'a':
+//        robot.turnLeft(param);
+//        robot.stop();
+//        break;
+//    }
+//  }
+//
+//  command[0] = 0;
+//  command[1] = 0;
+//  command[2] = 0;
+//  command[3] = 0;
+
+
+
+
+
+
+
+  delay(5000);
+
+  robot.moveFor(Wheel::convertMillimetersToSteps(270), Wheel::FORWARD);
+  robot.stop(); delay(1000);
+//  
+  robot.turnRight(60);  // 60
+  robot.stop(); delay(1000);
+//  
+  robot.moveFor(Wheel::convertMillimetersToSteps(40), Wheel::FORWARD);
+  robot.stop(); delay(1000);
+  
+  robot.turnRight(60); // 60 
+  robot.stop(); delay(1000);
+//  
+  robot.moveFor(Wheel::convertMillimetersToSteps(30), Wheel::FORWARD);
+  robot.stop(); delay(1000);
+
+  robot.turnLeft(80);
+  robot.stop(); delay(1000);
+  
+  robot.moveFor(Wheel::convertMillimetersToSteps(100), Wheel::FORWARD);
+  robot.stop(); delay(1000);
+////  
+////  robot.turnRight(50);
+////  robot.stop(); delay(1000);
+////  
+////  robot.moveFor(Wheel::convertMillimetersToSteps(120), Wheel::FORWARD);
+////  robot.stop(); delay(1000);
+//  
+////  robot.turnRight(50);
+////  robot.stop(); delay(1000);
+////  
+////  robot.moveFor(Wheel::convertMillimetersToSteps(120), Wheel::FORWARD);
+////  robot.stop(); delay(1000);
+////  
+////  robot.turnRight(40);
+////  robot.stop(); delay(1000);
+////  
+////  robot.moveFor(Wheel::convertMillimetersToSteps(500), Wheel::FORWARD);
+////  robot.stop(); delay(1000);
+//
+  robot.twerking();
+  robot.stop(); delay(1000);
+
+  for (int i=0; i<MAX_COUNT; i++) {
+    tone_ = melody[i];
+    beat = 50;
+
+    duration = beat * tempo; // Set up timing
+
+    playTone();
+    // A pause between notes...
+    delayMicroseconds(pause);
   }
+  
+  delay(5000);delay(5000);delay(5000);
+        
+        
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
   
 //  Serial.println(analogRead(A3));
 //    Serial.println(analogRead(A1));
 //    delay(10);
 
 //delay(5000);
-////robot.moveFor(Wheel::convertMillimetersToSteps(326), Wheel::FORWARD);
+//robot.moveFor(Wheel::convertMillimetersToSteps(326), Wheel::FORWARD);
 //robot.turnRight(45);
 //robot.stop();
 //delay(5000);
